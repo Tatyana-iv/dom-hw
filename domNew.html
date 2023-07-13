@@ -82,7 +82,6 @@
         const date = now.toISOString().slice(0, 19).replace("T", " ");
 
         const newComment = document.createElement("li");
-        //на этом моменте я ненмого зависла, с тем как скомпоновать стили о добавление нового коммента
         newComment.classList.add("comment", "comments", "conteiner", "add-form", "comment-header", "comment-footer", "comment-body", "new-comment");
         newComment.innerHTML = `<strong>${name}:</strong> ${comment}<span class="comment-date">${date}</span><button class="like-button"> 0</button>`;
         commentList.appendChild(newComment);
