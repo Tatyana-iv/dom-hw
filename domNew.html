@@ -54,42 +54,112 @@
             </div>
         </div>
     </div>
+    <script>
+        const commentList = document.getElementById("comment-list");
+        const nameInput = document.getElementById("name-input");
+        const commentInput = document.getElementById("comment-input");
+        const addCommentButton = document.getElementById("add-comment-button");
+
+        addCommentButton.addEventListener("click", () => {
+            nameInput.classList.remove("error");
+            commentInput.classList.remove("error");
+
+            const name = nameInput.value.trim();
+            const comment = commentInput.value.trim();
+
+            if (name === "") {
+                nameInput.classList.add("error");
+                return;
+            }
+
+            if (comment === "") {
+                commentInput.classList.add("error");
+                return;
+            }
+
+            const now = new Date();
+            const options = {
+                year: "numeric",
+                month: "numeric",
+                day: "numeric",
+                hour: "numeric",
+                minute: "numeric"
+            };
+
+            const formatter = new Intl.DateTimeFormat("ru", options);
+            const date = formatter.format(now);
+
+            const newComment = document.createElement("li");
+            newComment.classList.add("comment");
+            newComment.innerHTML = `
+    <div class="comment-header">
+        <div>${name}</div>
+        <div class="comment-date">${date}</div>
+    </div>
+    <div class="comment-body">
+        <div class="comment-text">${comment}</div>
+    </div>
+    <div class="comment-footer">
+        <div class="likes">
+            <span class="likes-counter">0</span>
+            <button class="like-button"></button>
+        </div>
+    </div>
+  `;
+            commentList.appendChild(newComment);
+
+            nameInput.value = "";
+            commentInput.value = "";
+        });
+        // const commentList = document.getElementById("comment-list");
+        // const nameInput = document.getElementById("name-input");
+        // const commentInput = document.getElementById("comment-input");
+        // const addCommentButton = document.getElementById("add-comment-button");
+
+        // addCommentButton.addEventListener("click", () => {
+        //     nameInput.classList.remove("error");
+        //     commentInput.classList.remove("error");
+
+        //     const name = nameInput.value.trim();
+        //     const comment = commentInput.value.trim();
+
+        //     if (name === "") {
+        //         nameInput.classList.add("error");
+        //         return;
+        //     }
+
+        //     if (comment === "") {
+        //         commentInput.classList.add("error");
+        //         return;
+        //     }
+
+        //     const now = new Date();
+        //     const date = now.toLocaleString();
+
+        //     const newComment = document.createElement("li");
+        //     newComment.classList.add("comment");
+        //     newComment.innerHTML = `
+        //  <div class="comment-header">
+        //     <div>${name}</div>
+        //     <div class="comment-date">${date}</div>
+        // </div>
+        // <div class="comment-body">
+        //     <div class="comment-text">${comment}</div>
+        // </div>
+        // <div class="comment-footer">
+        //     <div class="likes">
+        //         <span class="likes-counter">0</span>
+        //         <button class="like-button"></button>
+        //     </div>
+        // </div>`;
+        //     commentList.appendChild(newComment);
+
+        //     nameInput.value = "";
+        //     commentInput.value = "";
+        // });
+
+
+    </script>
 </body>
-<script>
-    const commentList = document.getElementById("comment-list");
-    const nameInput = document.getElementById("name-input");
-    const commentInput = document.getElementById("comment-input");
-    const addCommentButton = document.getElementById("add-comment-button");
-
-    addCommentButton.addEventListener("click", () => {
-        nameInput.classList.remove("error");
-        commentInput.classList.remove("error");
-
-        const name = nameInput.value.trim();
-        const comment = commentInput.value.trim();
-
-        if (name === "") {
-            nameInput.classList.add("error");
-            return;
-        }
-
-        if (comment === "") {
-            commentInput.classList.add("error");
-            return;
-        }
-
-        const now = new Date();
-        const date = now.toISOString().slice(0, 19).replace("T", " ");
-
-        const newComment = document.createElement("li");
-        newComment.classList.add("comment", "comments", "conteiner", "add-form", "comment-header", "comment-footer", "comment-body", "new-comment");
-        newComment.innerHTML = `<strong>${name}:</strong> ${comment}<span class="comment-date">${date}</span><button class="like-button"> 0</button>`;
-        commentList.appendChild(newComment);
-
-        nameInput.value = "";
-        commentInput.value = "";
-    });
-    console.log("It works!");
-</script>
 
 </html>
