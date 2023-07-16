@@ -61,56 +61,69 @@
         const addCommentButton = document.getElementById("add-comment-button");
 
         addCommentButton.addEventListener("click", () => {
-            nameInput.classList.remove("error");
-            commentInput.classList.remove("error");
+          nameInput.classList.remove("error");
+          commentInput.classList.remove("error");
+        
+          const name = nameInput.value.trim();
+          const comment = commentInput.value.trim();
 
-            const name = nameInput.value.trim();
-            const comment = commentInput.value.trim();
+          if (name === "") {
+            nameInput.classList.add("error");
+            return;
+          }
 
-            if (name === "") {
-                nameInput.classList.add("error");
-                return;
-            }
+          if (comment === "") {
+            commentInput.classList.add("error");
+            return;
+          }
 
-            if (comment === "") {
-                commentInput.classList.add("error");
-                return;
-            }
+         const now = new Date();
+         const options = {
+           year: "numeric",
+           month: "numeric",
+           day: "numeric",
+           hour: "numeric",
+           minute: "numeric"
+         };
+  
+         const formatter = new Intl.DateTimeFormat("ru", options);
+         const date = formatter.format(now);
 
-            const now = new Date();
-            const options = {
-                year: "numeric",
-                month: "numeric",
-                day: "numeric",
-                hour: "numeric",
-                minute: "numeric"
-            };
-
-            const formatter = new Intl.DateTimeFormat("ru", options);
-            const date = formatter.format(now);
-
-            const newComment = document.createElement("li");
+        const newComment = document.createElement("li");
             newComment.classList.add("comment");
             newComment.innerHTML = `
-    <div class="comment-header">
-        <div>${name}</div>
-        <div class="comment-date">${date}</div>
-    </div>
-    <div class="comment-body">
-        <div class="comment-text">${comment}</div>
-    </div>
-    <div class="comment-footer">
-        <div class="likes">
-            <span class="likes-counter">0</span>
-            <button class="like-button"></button>
-        </div>
-    </div>
-  `;
+             <div class="comment-header">
+                    <div>${name}</div>
+                    <div class="comment-date">${date}</div>
+                </div>
+                <div class="comment-body">
+                    <div class="comment-text">${comment}</div>
+                </div>
+                <div class="comment-footer">
+                <div class="likes">
+                    <span class="likes-counter">0</span>
+                    <button class="like-button"></button>
+                </div>
+            </div>
+            `;
             commentList.appendChild(newComment);
 
             nameInput.value = "";
             commentInput.value = "";
+
+        const likeButton = newComment.querySelector(".like-button");
+        const likesCounter = newComment.querySelector(".likes-counter");
+
+        likeButton.addEventListener("click", () => {
+          if (likeButton.classList.contains("likes")) {
+            likeButton.classList.remove("likes");
+            likesCounter.textContent = parseInt(likesCounter.textContent) - 1;
+          } else {
+            likeButton.classList.add("likes");
+            likesCounter.textContent = parseInt(likesCounter.textContent) + 1;
+          }
         });
+    });
     </script>
 </body>
 
