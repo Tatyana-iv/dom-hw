@@ -54,7 +54,7 @@
             </div>
         </div>
     </div>
-    <script>
+    <script>//основной скрипт для написания комментариев
         const commentList = document.getElementById("comment-list");
         const nameInput = document.getElementById("name-input");
         const commentInput = document.getElementById("comment-input");
@@ -76,7 +76,7 @@
                 commentInput.classList.add("error");
                 return;
             }
-
+            //добавление даты
             const now = new Date();
             const options = {
                 year: "numeric",
@@ -88,7 +88,7 @@
 
             const formatter = new Intl.DateTimeFormat("ru", options);
             const date = formatter.format(now);
-
+            //основной макет нового коммента
             const newComment = document.createElement("li");
             newComment.classList.add("comment");
             newComment.innerHTML = `
@@ -110,7 +110,7 @@
 
             nameInput.value = "";
             commentInput.value = "";
-
+          //кнопка лайка
             const likeButton = newComment.querySelector(".like-button");
             const likesCounter = newComment.querySelector(".likes-counter");
 
@@ -124,7 +124,7 @@
                 }
             });
         });
-
+        //кнопка возврата
         window.addEventListener("load", () => {
             const comments = commentList.getElementsByClassName("comment");
             for (let i = 0; i < comments.length; i++) {
@@ -143,6 +143,7 @@
                 });
             }
         });
+
     </script>
 </body>
 
