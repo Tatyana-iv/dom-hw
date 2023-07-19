@@ -65,54 +65,62 @@
             {
                 name: 'Глеб Фокин',
                 dateCreation: '12.02.22 12:18',
-                textComment: 'Это будет первый комментарий на этой странице',
-                likeComment: false,
+                commentText: 'Это будет первый комментарий на этой странице',
+                isLiked: false,
                 likeNumber: 3,
             },
             {
                 name: 'Варвара Н.',
                 dateCreation: '13.02.22 19:22',
                 textComment: 'Мне нравится как оформлена эта страница! ❤️',
-                likeComment: false,
+                isLiked: false,
                 likeNumber: 75,
             },
-        ];
-            // форма добавления из массива
-        const renderComments = () => {
-            const commentsHTML = comments.map((comment) => {
-                ` <div class="comment-header">
-        <div>${name}</div>
-        <div class="comment-date">${dateCreation}</div>
-    </div>
-    <div class="comment-body">
-        <div class="comment-text">${textComment}</div>
-    </div>
-    <div class="comment-footer">
-        <div class="likes">
-            <span class="likes-counter">$likeNumber</span>
-            <button class="like-button"></button>
-        </div>
-    </div>  `
-            }).join('');
-            commentList.innerHTML = commentsHTML;
-        };
-        //если не ввели имя,то выдать ошибку
-        addCommentButton.addEventListener("click", () => {
-            nameInput.classList.remove("error");
-            commentInput.classList.remove("error");
+            ];
+            
 
-            const name = nameInput.value.trim();
-            const comment = commentInput.value.trim();
+            function handleAddComment() {
+            const commentText = document.getElementById("commentText").value;
 
-            if (name === "") {
-                nameInput.classList.add("error");
-                return;
+             if (commentText !== "") {
+               const comment = {
+                 text: commentText,
+                 isLiked: false
+              };
+
+              comments.push(comment);
+              renderComments();
+
+               document.getElementById("commentText").value = "";
+             }
             }
 
-            if (comment === "") {
-                commentInput.classList.add("error");
-                return;
+            function handleLikeComment(index) {
+            comments[index].isLiked = !comments[index].isLiked;
+            renderComments();
             }
+
+            function renderComments() {
+            const commentsContainer = document.getElementById("commentsContainer");
+            commentsContainer.innerHTML = "";
+
+            comments.forEach((comment, index) => {
+              const commentElement = document.createElement("div");
+              commentElement.classList.add("comment");
+
+              const commentTextElement = document.createElement("p");
+              commentTextElement.innerText = comment.text;
+              commentElement.appendChild(commentTextElement);
+
+              const likeButton = document.createElement("button");
+              likeButton.innerText = comment.isLiked ? "Unlike" : "Like";
+              likeButton.addEventListener("click", () => handleLikeComment(index));
+              commentElement.appendChild(likeButton);
+
+              commentsContainer.appendChild(commentElement);
+            });
+            }
+
 
             const now = new Date();
             const options = {
@@ -126,24 +134,24 @@
             const formatter = new Intl.DateTimeFormat("ru", options);
             const date = formatter.format(now);
             //форма добавления новго коммента
-            const newComment = document.createElement("li");
-            newComment.classList.add("comment");
-                        newComment.innerHTML = `
-                <div class="comment-header">
-                    <div>${name}</div>
-                    <div class="comment-date">${date}</div>
-                </div>
-                <div class="comment-body">
-                    <div class="comment-text">${comment}</div>
-                </div>
-                <div class="comment-footer">
-                    <div class="likes">
-                        <span class="likes-counter">0</span>
-                        <button class="like-button"></button>
-                    </div>
-                </div>
-              `;
-            commentList.appendChild(newComment);
+            // const newComment = document.createElement("li");
+            //         newComment.classList.add("comment");
+            //             newComment.innerHTML = `
+            //     <div class="comment-header">
+            //         <div>${name}</div>
+            //         <div class="comment-date">${date}</div>
+            //     </div>
+            //     <div class="comment-body">
+            //         <div class="comment-text">${comment}</div>
+            //     </div>
+            //     <div class="comment-footer">
+            //         <div class="likes">
+            //             <span class="likes-counter">0</span>
+            //             <button class="like-button"></button>
+            //         </div>
+            //     </div>
+            //   `;
+            // commentList.appendChild(newComment);
 
             nameInput.value = "";
             commentInput.value = "";
@@ -160,7 +168,6 @@
                     likesCounter.textContent = parseInt(likesCounter.textContent) + 1;
                 }
             });
-        });
     </script>
 </body>
 
