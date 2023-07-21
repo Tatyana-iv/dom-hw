@@ -84,83 +84,106 @@
                 isEdit: false,
             },
         ];
+            function renderComments() {
+            const listElement = document.getElementById("comment-list");
+            const commentHtml = comments.map((comment) => {
+             return `
+               <div class="comment">
+                 <div class="comment-header">
+                   <div class="comment-info">
+                     <div class="comment-name">${comment.name}</div>
+                     <div class="comment-time">${comment.time}</div>
+                   </div>
+                   <div class="comment-buttons">
+                     <button class="like-button" data-comment-index="${comment.index}">Like</button>
+                     <button class="edit-button" data-comment-index="${comment.index}">Edit</button>
+                   </div>
+                 </div>
+                 <div class="comment-content">${comment.comment}</div>
+                 <div class="comment-actions">
+                   <button class="delete-button" data-comment-index="${comment.index}">Delete</button>
+                 </div>
+               </div>
+             `;
+            }).join("");
 
-        const renderComments = () => {
-            const commentsHtml = comments
-                .map((comment, index) => {
-                    return `<li class="comment">
-                         <div class="comment-header">
-                             <div>${comment.name}</div>
-                             <div>${comment.time}</div>
-                         </div>
-                         <div class="comment-body">
-                             ${edit}
-                         </div>
-                         <div class="comment-footer">
-                             ${correctBtn}
-                             <div class="likes">
-                             <span class="likes-counter">${comment.likesCount}</span>
-                             <button data-index="${index}" class="${like}"></button>
-                             </div>
-                         </div>
-                    </li>`;
-                })
-
-                .join("");
-
-            listElement.innerHTML = commentsHtml;
+            listElement.innerHTML = commentHtml;
 
             initLikeButtonsListeners();
-            initCorrectButtonsListeners();
-        };
-
-        const initEventListeners = () => {
-            const commentElements = document.querySelectorAll(".comment");
-
-            for (const commentElement of commentElements) {
-                commentElement.addEventListener("click", () => {
-                    console.log(commentElement.dataset.comment);
-                });
-            }
+            initEventListeners();
+            initDeleteButtonsListeners();
         };
 
         const initDeleteButtonsListeners = () => {
-            const deleteButtonsElements = document.querySelectorAll("delete-button");
+        const deleteButtonsElements = document.querySelectorAll(".delete-button");
 
-            for (const deleteButtonElement of deleteButtonsElements) {
-                deleteButtonElement.addEventListener("click", () => {
-                    console.log("delete");
-                });
-            }
+        for (const deleteButtonElement of deleteButtonsElements) {
+            deleteButtonElement.addEventListener("click", () => {
+            console.log("delete");
+            });
+        }
         };
 
-        rendercomments();
+        const initEventListeners = () => {
+        const commentElements = document.querySelectorAll(".comment");
+
+        for (const commentElement of commentElements) {
+            commentElement.addEventListener("click", () => {
+            console.log(commentElement.dataset.comment);
+            });
+        }
+        };
+
+        renderComments();
 
         buttonElement.addEventListener('click', () => {
-            nameInputElement.classList.remove("input-error");
-            commentInputElement.classList.remove("input-error");
-            if (nameInputElement.value === "") {
-                nameInputElement.classList.add("input-error");
-                return;
-            }
-            if(commentInputElement.value === "") {
-                commentInputElement.classList.add("input-error");
-                return;
-            }
-            comments.push({
-                name: nameInputElement.value,
-                time: getCurrentDate(new Date()),
-                comment: commentInputElement.value,
-                likesCount: 0,
-                liked: false,
-                isEdit: false,
-            });
-            renderComments();
-            commentInputElement.value = "";
+        nameInputElement.classList.remove("input-error");
+        commentInputElement.classList.remove("input-error");
+        if (nameInputElement.value === "") {
+            nameInputElement.classList.add("input-error");
+            return;
+        }
+        if (commentInputElement.value === "") {
+            commentInputElement.classList.add("input-error");
+            return;
+        }
+        comments.push({
+            name: nameInputElement.value,
+            time: getCurrentDate(new Date()),
+            comment: commentInputElement.value,
+            likesCount: 0,
+            liked: false,
+            isEdit: false,
         });
 
-       
+        renderComments();
+        commentInputElement.value = "";
+        });
 
+        function initLikeButtonsListeners() {
+          const likeButtons = document.querySelectorAll(".like-button");
+
+         likeButtons.forEach((button) => {
+           button.addEventListener("click", (event) => {
+              const commentIndex = event.target.dataset.commentIndex;
+             comments[commentIndex].likesCount++;
+              renderComments();
+            });
+          });
+        }
+
+        function initCorrectButtonsListeners() {
+            const editButtons = document.querySelectorAll(".edit-button");
+
+                editButtons.forEach((button) => {
+                button.addEventListener("click", (event) => {
+                const commentIndex = event.target.dataset.commentIndex;
+                openEditForm(commentIndex);
+                });
+            });
+            };
+          
+       
         function getCurrentDate(date) {
             let day = date.getDate();
             if (day < 10) day = '0' + day;
