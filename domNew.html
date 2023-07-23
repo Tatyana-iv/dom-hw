@@ -46,9 +46,11 @@
             </li> -->
         </ul>
         <div class="add-form">
-            <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name-input" />
-            <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
+            <input type="text" name="autor" class="add-form-name" placeholder="Введите ваше имя" id="name-input" />
+            <textarea type="textarea" name="text" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
                 id="comment-input"></textarea>
+            <input type="hidden" name="reply-author" id="reply-author">
+            <input type="hidden" name="reply-text" id="reply-text">
             <div class="add-form-row">
                 <button class="add-form-button" id="add-comment-button">Написать</button>
             </div>
@@ -60,6 +62,8 @@
         const listElement = document.getElementById('comment-list');
         const nameInputElement = document.getElementById('name-input');
         const commentInputElement = document.getElementById('comment-input');
+
+        let isReplay = false;
 
         const users = [
             {
@@ -91,15 +95,9 @@
                     if (user.isLiked) {
                         user.likesCount--;
                         user.isLiked = false;
-                        if (likeIcon) {
-                            likeIcon.classList.remove("-active-like");
-                        }
                     } else {
                         user.likesCount++;
                         user.isLiked = true;
-                        if (likeIcon) {
-                            likeIcon.classList.add("-active-like");
-                        }
                     }
                     renderUsers();
                 });
@@ -109,7 +107,7 @@
             const usersHTML = users.map((user, index) => {
                 return `
                 <li class="comment">
-                    <div class="comment-header">
+                    <div class="comment-header" data-comment-id="1">
                     <div>${user.name}</div>
                     <div class="comment-date">${user.time}</div>
                     </div>
@@ -153,6 +151,8 @@
             commentInputElement.value = "";
         });
 
+
+
         function getCurrentDate(date) {
             let day = date.getDate();
             if (day < 10) day = '0' + day;
@@ -163,7 +163,123 @@
             let minute = date.getMinutes();
             if (minute < 10) minute = '0' + minute;
             return day + '.' + month + '.' + (date.getFullYear() % 100) + ' ' + hour + ':' + minute;
-        }
+        };
+
+        const addComment = () => {
+            console.log(isReplay);
+
+            const listElementValue = isReplay
+                ? `QUOTE_BEGIN${listElement.value}QUOTE_END`
+                : listElement.value;
+            if (nameInputElement.value === '') {
+                nameInputElement.classList.add('form-error');
+                return;
+            } else {
+                comments.push({
+                    name: replaceValue(nameInputElement.value),
+                    comment: replaceValue(listElementValue)
+                        .replaceAll('QUOTE_BEGIN', '<div class="quote">')
+                        .replaceAll('QUOTE_END', '</div>'),
+                    time: getCurrentDate(new Date()),
+                    likesCount: 0,
+                    isLiked: '',
+                });
+                console.log(comments);
+            }
+            renderComments();
+
+            listElement.value = '';
+            nameInputElement = '';
+            listElement.classList.remove('form-error');
+            nameInputElement.classList.remove('form-error');
+            isReplay = false;
+            console.log(isReplay);
+        };
+
+        const likeComment = () => {
+            const likeButtons = document.querySelectorAll('.like-button');
+
+            for (const likeButton of likeButtons) {
+                likeButton.addEventListener('click', (event) => {
+                    event.stopPropagation();
+
+                    let index = likeButton.dataset.index;
+                    let likesCount = comments[index].likeCount;
+
+                    if (comments[index].activeClass === 'like-button -active-like') {
+                        likesCount -= 1;
+                        comments[index].activeClass = 'like-button';
+                    } else {
+                        likesCount += 1;
+                        comments[index].activeClass = 'like-button -active-like';
+                    }
+                    commnets[index].likesCount = likesCount;
+                    renderComments();
+                });
+            }
+        };
+
+        const newReplay = () => {
+            const commentElements = document.querySelectorAll('.comment');
+
+            for (const commentElement of commentElements) {
+                commentElement.addEventListener('click', () => {
+                    let index = commentElement.dataset.index;
+
+                    const originalText = `${comments[index].name} : ${comments[index].comment
+                        .replaceAll('<div class="quote">', '')
+                        .replaceAll('</div>', '')}`;
+                    listElement.value = originalText;
+                    isReplay = true;
+                    console.log(isReplay);
+                });
+            }
+        };
+
+        const replaceValue = (value) => {
+            return value
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;');
+        };
+
+        renderComments();
+
+        addButton.addEventListener('click', addComment);
+        listElement.addEventListener('keyup', (event) => {
+            if (event.key === 'Enter') {
+                addComment();
+            }
+        });
+
+        nameInputElement.addEventListener('keyup', (event) => {
+            if (event.key === 'Enter') {
+                addComment();
+            }
+        });
+        console.log('It works!');
+
+
+
+        document.getElementById('add-comment-button').addEventListener('click', (event) => {
+            event.preventDefault();
+            const author = document.getElementById('name-input').value;
+            const text = document.getElementById('comment-input').value;
+
+            if (author.trim() === '' || text.trim() === '') {
+                return;
+            }
+            const newComment = document.createElement('div');
+            newComment.classList.add('comment');
+            newComment.innerHTML = `<strong>${author}:</strong> ${text}`;
+            newComment.dataset.author = author;
+            newComment.dataset.text = text;
+            document.getElementById('comment-list').appendChild(newComment);
+
+            document.getElementById('name-input').value = '';
+            document.getElementById('comment-input').value = '';
+        });
     </script>
 </body>
 
