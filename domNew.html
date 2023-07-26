@@ -63,156 +63,157 @@
         const nameInputElement = document.getElementById('name-input');
         const commentInputElement = document.getElementById('comment-input');
 
-         let isReplay = false;
+        window.isReplay = false;
 
-            const users = [
-                {
-                    name: 'Глеб Фокин',
-                    time: '12.02.22 12:18',
-                    comment: 'Это будет первый комментарий на этой странице',
-                    likesCount: 3,
-                    isLiked: false,
-                },
-                {
-                    name: 'Варвара Н.',
-                    time: '13.02.22 19:22',
-                    comment: 'Мне нравится как оформлена эта страница!❤️',
-                    likesCount: 75,
-                    isLiked: true,
-                },
-            ];
+        const users = [
+            {
+                name: 'Глеб Фокин',
+                time: '12.02.22 12:18',
+                comment: 'Это будет первый комментарий на этой странице',
+                likesCount: 3,
+                isLiked: false,
+            },
+            {
+                name: 'Варвара Н.',
+                time: '13.02.22 19:22',
+                comment: 'Мне нравится как оформлена эта страница!❤️',
+                likesCount: 75,
+                isLiked: true,
+            },
+        ];
 
 
-            function initLikeButtons() {
+        function initLikeButtons() {
 
-                const likeButtons = document.querySelectorAll(".like-button");
+            const likeButtons = document.querySelectorAll(".like-button");
 
-                likeButtons.forEach((button) => {
-                    button.addEventListener("click", (event) => {
-                        const userIndex = event.target.dataset.index;
-                        const user = users[userIndex];
-                        const likeIcon = event.target.querySelector(".like-icon");
+            likeButtons.forEach((button) => {
+                button.addEventListener("click", (event) => {
+                    const userIndex = event.target.dataset.index;
+                    const user = users[userIndex];
+                    const likeIcon = event.target.querySelector(".like-icon");
 
-                        if (user.isLiked) {
-                            user.likesCount--;
-                            user.isLiked = false;
-                        } else {
-                            user.likesCount++;
-                            user.isLiked = true;
-                        }
-                        renderUsers();
-                    });
+                    if (user.isLiked) {
+                        user.likesCount--;
+                        user.isLiked = false;
+                    } else {
+                        user.likesCount++;
+                        user.isLiked = true;
+                    }
+                    renderUsers();
                 });
+            });
+        }
+        // renderUsers();
+        buttonElement.addEventListener("click", () => {
+            if (nameInputElement.value === "" || commentInputElement.value === "") {
+                buttonElement.disabled = true;
+                return;
             }
-            // renderUsers();
-            buttonElement.addEventListener("click", () => {
-                if (nameInputElement.value === "" || commentInputElement.value === "") {
-                    buttonElement.disabled = true;
-                    return;
-                }
 
-                users.push({
-                    name: nameInputElement.value,
-                    time: getCurrentDate(new Date()),
-                    comment: commentInputElement.value,
-                    likesCount: 0,
-                    isLiked: false,
-                });
-
-                renderUsers();
-                nameInputElement.value = "";
-                commentInputElement.value = "";
+            users.push({
+                name: nameInputElement.value,
+                time: getCurrentDate(new Date()),
+                comment: commentInputElement.value,
+                likesCount: 0,
+                isLiked: false,
             });
 
+            renderUsers();
+            nameInputElement.value = "";
+            commentInputElement.value = "";
+        });
 
 
-            function getCurrentDate(date) {
-                let day = date.getDate();
-                if (day < 10) day = '0' + day;
-                let month = date.getMonth() + 1;
-                if (month < 10) month = '0' + month;
-                let hour = date.getHours();
-                if (hour < 10) hour = '0' + hour;
-                let minute = date.getMinutes();
-                if (minute < 10) minute = '0' + minute;
-                return day + '.' + month + '.' + (date.getFullYear() % 100) + ' ' + hour + ':' + minute;
-            };
 
-            const addComment = () => { 
-                console.log(isReply);
+        function getCurrentDate(date) {
+            let day = date.getDate();
+            if (day < 10) day = '0' + day;
+            let month = date.getMonth() + 1;
+            if (month < 10) month = '0' + month;
+            let hour = date.getHours();
+            if (hour < 10) hour = '0' + hour;
+            let minute = date.getMinutes();
+            if (minute < 10) minute = '0' + minute;
+            return day + '.' + month + '.' + (date.getFullYear() % 100) + ' ' + hour + ':' + minute;
+        };
 
-                const commentInputElementValue = isReply
-                 ?`QUOTE_BEGINS$(commentInputElement.value}QUOTE_END` : commentInputElement.value;
-            
-                if(nameInputElement.value === '') {
-                    nameInputElement.classList.add('form-error');
-                    return;
-                } else if (commentInputElement.value === '') {
-                    commentInputElement.classList.add('form-error');
-                    return;
-                } else {
-                    users.push ({
-                        name: replaceValue(nameInputElement.value),
-                        comment: replaceValue(commentInputElement)
-                        .replaceAll('QUOTE_BEGIN', '<div class="quote">')
+        function addComment() {
+            console.log(window.isReply);
+
+            const commentInputElementValue = window.isReply
+                ? `QUOTE_BEGINS${commentInputElement.value}QUOTE_END` : commentInputElement.value;
+
+            if (nameInputElement.value === '') {
+                nameInputElement.classList.add('form-error');
+                return;
+            } else if (commentInputElement.value === '') {
+                commentInputElement.classList.add('form-error');
+                return;
+            } else {
+                users.push({
+                    name: replaceValue(nameInputElement.value),
+                    comment: replaceValue(commentInputElement.value)
+                        .replaceAll('QUOTE_BEGINS', '<div class="quote">')
                         .replaceAll('QUOTE_END', '</div>'),
-                        time: getCurrentDate(),
-                        isLiked: '',
-                        likesCount: 0,
-                    });
-                }
-                renderUsers();
-
-                commentInputElement.value = '';
-                nameInputElement.value = '';
-                commentInputElement.classList.remove('form-error');
-                nameInputElement.classList.remove('form-error');
-                isReplay = false;
-                console.log(isReply); 
-            };
-            const likeComment = () => {
-                const likeButtons = document.querySelectorAll ('.like-button');
-
-                for (const likeButton of likeButtons) {
-                    likeButton.addEventListener('click', (event) =>{
-                        event.stopPropagation();
-
-                        let index = likeButton.dataset.index;
-                        let likesCount = users[index].likesCount;
-
-                        if (users[index].isLiked === 'like-button -active-like') {
-                            likesCount -= 1;
-                            users[index].isLiked = 'like-button';
-                        } else {
-                            likesCount += 1;
-                            users[index].isLiked = 'like-button -active-like';
-                        }
-                        users[index].likesCount = likesCount;
-                        renderUsers();
-                    });
-                }
+                    time: getCurrentDate(),
+                    isLiked: '',
+                    likesCount: 0,
+                });
             }
-         const newReply = () => {
+            renderUsers();
+
+            commentInputElement.value = '';
+            nameInputElement.value = '';
+            commentInputElement.classList.remove('form-error');
+            nameInputElement.classList.remove('form-error');
+            window.isReplay = false;
+            console.log(window.isReply);
+        };
+        function likeComment() {
+            const likeButtons = document.querySelectorAll('.like-button');
+
+            for (const likeButton of likeButtons) {
+                likeButton.addEventListener('click', (event) => {
+                    event.stopPropagation();
+
+                    let index = likeButton.dataset.index;
+                    let likesCount = users[index].likesCount;
+
+                    if (users[index].isLiked === 'like-button -active-like') {
+                        likesCount -= 1;
+                        users[index].isLiked = 'like-button';
+                    } else {
+                        likesCount += 1;
+                        users[index].isLiked = 'like-button -active-like';
+                    }
+                    users[index].likesCount = likesCount;
+                    renderUsers();
+                });
+            }
+        }
+        function newReply() {
             const userElements = document.querySelectorAll('.comment');
 
             for (const userElement of userElements) {
                 userElement.addEventListener('click', () => {
                     let index = userElement.dataset.index;
 
-                    const originalText = `${users[index].name} : ${users[index].comment
-                    .replaceAll('<div class="quote">', '')
-                    .replaceAll('</div>', '')}`;
+                    console.log(users, index);
+                    const originalText = `> ${users[index].name} : ${users[index].comment
+                        .replaceAll('<div class="quote">', '')
+                        .replaceAll('</div>', '')}`;
                     commentInputElement.value = originalText;
-                    isReply = true;
-                    console.log(isReplay);
+                    window.isReply = true;
+                    console.log(window.isReplay);
                 });
             }
-         };
+        };
 
-         const renderUsers = () => {
-                const usersHTML = users.map((user, index) => {
-                    return `
-                    <li class="comment">
+        function renderUsers() {
+            const usersHTML = users.map((user, index) => {
+                return `
+                    <li class="comment" data-index='${index}'>
                         <div class="comment-header" data-comment-id="1">
                         <div>${user.name}</div>
                         <div class="comment-date">${user.time}</div>
@@ -230,19 +231,19 @@
                         </div>
                     </li>
                     `;
-                }).join("");
+            }).join("");
 
-                listElement.innerHTML = usersHTML;
-                initLikeButtons();
-                newReply();
-            };
-        
-        const replaceValue = (value) => {
+            listElement.innerHTML = usersHTML;
+            initLikeButtons();
+            newReply();
+        };
+
+        function replaceValue(value) {
             return value
-            .replaceAll('&', '&amp;')
-            .replaceAll('<', '&lt;')
-            .replaceAll('>', '&gt;')
-            .replaceAll('"', '&quot');
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot');
         };
         renderUsers();
 
@@ -260,12 +261,8 @@
             }
         });
         console.log('It works!');
-    
+
     </script>
 </body>
 
 </html>
-
-
-  
-   
